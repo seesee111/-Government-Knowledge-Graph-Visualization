@@ -1,4 +1,4 @@
-CREATE CONSTRAINT ON (g:Government) ASSERT g.id IS UNIQUE;
+CREATE CONSTRAINT FOR (g:Government) REQUIRE g.id IS UNIQUE;
 
 CREATE (:Government {id: '1', name: 'Ministry of Finance', description: 'Responsible for financial and economic policy.'});
 CREATE (:Government {id: '2', name: 'Ministry of Health', description: 'Oversees public health and healthcare services.'});

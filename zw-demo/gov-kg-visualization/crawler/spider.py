@@ -8,7 +8,7 @@ class GovernmentCrawler:
         self.data = []
 
     def fetch_page(self, url):
-        response = requests.get(url)
+        response = requests.get(url, proxies={"http": None, "https": None})
         if response.status_code == 200:
             return response.text
         else:
@@ -35,8 +35,8 @@ class GovernmentCrawler:
 
 if __name__ == "__main__":
     start_urls = [
-        'https://example.gov/info1',
-        'https://example.gov/info2',
+        'https://www.lnzwfw.gov.cn/wyk/fwqd/sxml/',
+        # 'https://example.gov/info2',
         # Add more URLs as needed
     ]
     crawler = GovernmentCrawler(start_urls)

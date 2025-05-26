@@ -20,7 +20,7 @@
 1. **克隆仓库**：
    ```
    git clone <repository-url>
-   cd gov-kg-visualization
+   cd zw-demo\gov-kg-visualization
    ```
 
 2. **安装依赖**：
@@ -69,7 +69,7 @@ This project aims to create a visualization system for government information us
 1. **Clone the repository**:
    ```
    git clone <repository-url>
-   cd gov-kg-visualization
+   cd zw-demo\gov-kg-visualization
    ```
 
 2. **Install dependencies**:

@@ -10,7 +10,7 @@ class KnowledgeGraphBuilder:
 
     def create_node(self, label, properties):
         with self.driver.session() as session:
-            session.write_transaction(self._create_node, label, properties)
+            session.execute_write(self._create_node, label, properties)
 
     @staticmethod
     def _create_node(tx, label, properties):
@@ -19,7 +19,7 @@ class KnowledgeGraphBuilder:
 
     def create_relationship(self, start_label, start_id, end_label, end_id, relationship_type):
         with self.driver.session() as session:
-            session.write_transaction(self._create_relationship, start_label, start_id, end_label, end_id, relationship_type)
+            session.execute_write(self._create_relationship, start_label, start_id, end_label, end_id, relationship_type)
 
     @staticmethod
     def _create_relationship(tx, start_label, start_id, end_label, end_id, relationship_type):
@@ -32,21 +32,21 @@ class KnowledgeGraphBuilder:
 
     def build_knowledge_graph(self, data):
         for item in data:
-            # Assuming item contains 'label' and 'properties' for nodes
+            # 假设 item 包含节点的 'label' 和 'properties'
             self.create_node(item['label'], item['properties'])
-            # Assuming relationships are defined in item['relationships']
+            # 假设关系定义在 item['relationships'] 中
             for rel in item.get('relationships', []):
                 self.create_relationship(rel['start_label'], rel['start_id'], rel['end_label'], rel['end_id'], rel['type'])
 
 if __name__ == "__main__":
-    # Example usage
+    # 示例用法
     uri = "bolt://localhost:7687"
     user = "neo4j"
-    password = "your_password"
+    password = "12345678"
 
     kg_builder = KnowledgeGraphBuilder(uri, user, password)
 
-    # Sample data to build the knowledge graph
+    # 用于构建知识图谱的示例数据
     sample_data = [
         {
             "label": "GovernmentAgency",
