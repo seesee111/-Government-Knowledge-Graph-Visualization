@@ -1,0 +1,7 @@
+requests
+beautifulsoup4
+neo4j
+flask
+flask-cors
+d3
+```
