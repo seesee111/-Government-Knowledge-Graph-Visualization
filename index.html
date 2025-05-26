@@ -21,6 +21,7 @@
     <main>
         <section>
             <h2>关于我</h2>
+            <img src="https://cdn.jsdelivr.net/gh/jerryc127/CDN/img/cat-avatar.png" alt="猫猫头像" style="width:120px;height:120px;border-radius:50%;display:block;margin-bottom:16px;">
             <p>你好！我是XXX，一名热爱编程和分享的开发者。</p>
         </section>
         <section>
@@ -32,6 +33,10 @@
             </ul>
         </section>
         <section>
+            <h2>中国2021-2024年新生儿出生数量变化</h2>
+            <canvas id="birthChart" width="600" height="350"></canvas>
+        </section>
+        <section>
             <h2>联系方式</h2>
             <p>邮箱：your.email@example.com</p>
         </section>
@@ -39,5 +44,47 @@
     <footer>
         &copy; 2025 我的个人博客
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('birthChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['2021', '2022', '2023', '2024'],
+                datasets: [{
+                    label: '新生儿出生数量（万）',
+                    data: [1062, 956, 902, 830], // 数据来源：国家统计局公开数据，2024为预估
+                    borderColor: '#4CAF50',
+                    backgroundColor: 'rgba(76,175,80,0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#4CAF50'
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: '出生数量（万）'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: '年份'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
