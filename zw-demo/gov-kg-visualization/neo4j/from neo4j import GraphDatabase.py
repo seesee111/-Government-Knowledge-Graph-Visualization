@@ -20,12 +20,4 @@ with driver.session() as session:
         name = record["name"]
         session.run(f"DROP INDEX {name} IF EXISTS")
 
-with open(r"zw-demo\gov-kg-visualization\neo4j\cypher_queries.cypher", "r", encoding="utf-8") as f:
-    cypher = f.read()
-
-with driver.session() as session:
-    for statement in cypher.split(";"):
-        stmt = statement.strip()
-        if stmt:
-            session.run(stmt)
 driver.close()

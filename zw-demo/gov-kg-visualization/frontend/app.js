@@ -2,25 +2,26 @@
 // It handles user interactions, makes API calls to the backend, and processes the data for visualization.
 
 document.addEventListener('DOMContentLoaded', function() {
-    const fetchDataButton = document.getElementById('fetch-data');
-    const visualizationContainer = document.getElementById('visualization');
 
-    fetchDataButton.addEventListener('click', function() {
-        fetch('/api/neo4j/data')
-            .then(response => response.json())
-            .then(data => {
-                renderVisualization(data);
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
+    document.getElementById('load-data').addEventListener('click', async () => {
+        try {
+            const response = await fetch('http://localhost:5000/api/graph');
+            if (!response.ok) {
+                alert('后端接口请求失败');
+                return;
+            }
+            const data = await response.json();
+            renderGraph(data.nodes, data.links);
+        } catch (e) {
+            alert('加载或解析数据出错');
+            console.error(e);
+        }
     });
 
-    function renderVisualization(data) {
-        // Clear previous visualization
-        visualizationContainer.innerHTML = '';
-
-        // Call the D3 visualization function
-        createD3Visualization(data);
-    }
+    document.getElementById('search-btn').addEventListener('click', () => {
+        const name = document.getElementById('search-input').value.trim();
+        if (name) {
+            highlightNode(name);
+        }
+    });
 });
