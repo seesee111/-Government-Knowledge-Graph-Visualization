@@ -1,25 +1,37 @@
+/* 页面整体字体和背景 */
 body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: #f5f7fa;
+    font-family: 'Segoe UI', Arial, sans-serif; /* 设置字体 */
+    background: #f5f7fa; /* 浅灰背景 */
     margin: 0;
     padding: 0;
 }
+
+/* 顶部标题栏样式 */
 header {
-    background: #1f77b4;
-    color: #fff;
+    background: #1f77b4; /* 蓝色背景 */
+    color: #fff;         /* 白色字体 */
     padding: 20px 0;
     text-align: center;
 }
+
+/* 主体内容区域 */
 main {
     padding: 20px;
 }
+
+/* 顶部按钮和输入框区域 */
 .controls {
     margin-bottom: 16px;
     display: flex;
     gap: 8px;
     align-items: center;
 }
+
+/* 图谱可视化区域样式 */
 #visualization {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background: #fff;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
@@ -27,9 +39,11 @@ main {
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     overflow: hidden;
 }
+
+/* 按钮样式 */
 button {
-    background: #1f77b4;
-    color: #fff;
+    background: #1f77b4;    /* 蓝色背景 */
+    color: #fff;            /* 白色字体 */
     border: none;
     border-radius: 4px;
     padding: 8px 18px;
@@ -38,11 +52,46 @@ button {
     transition: background 0.2s;
 }
 button:hover {
-    background: #155a8a;
+    background: #155a8a;    /* 悬停时更深蓝色 */
 }
+
+/* 输入框样式 */
 input[type="text"] {
     padding: 8px;
     font-size: 16px;
     border: 1px solid #bdbdbd;
     border-radius: 4px;
+}
+
+/* 右侧信息面板样式 */
+#info-panel {
+    width: 320px;
+    min-height: 600px;
+    margin-left: 24px;
+    background: #f9fafb;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    padding: 18px 16px;
+    font-size: 15px;
+    color: #222;
+    overflow-y: auto;
+}
+
+/* 信息面板标题样式 */
+#info-panel h2 {
+    font-size: 18px;
+    margin-top: 0;
+    color: #1f77b4;
+}
+
+/* 信息面板每一行样式 */
+#info-panel .info-row {
+    margin-bottom: 10px;
+}
+
+/* 信息面板标签样式 */
+#info-panel .info-label {
+    color: #888;
+    margin-right: 6px;
 }
