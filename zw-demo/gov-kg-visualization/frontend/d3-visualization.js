@@ -10,6 +10,30 @@ const colorMap = {
     other: "#888"          // 其他-灰色
 };
 
+const DEPT_MAP = {
+    "09": "公安", "11": "民政", "15": "国土", "16": "环保", "17": "住建", "18": "交通运输", "20": "农委",
+    "21": "商务", "22": "文化与旅游", "23": "卫计", "24": "退役军人", "25": "安监", "30": "地税",
+    "31": "市场", "39": "新闻出版广电", "64": "林业", "72": "药监", "73": "知识产权", "75": "档案",
+    "76": "保密", "99": "其他"
+};
+const MATTER_TYPE_MAP = {
+    "99": "空白", "10": "其他行政权力", "09": "行政裁决", "02": "行政处罚", "05": "行政给付",
+    "06": "行政检查", "03": "行政强制", "01": "行政许可", "04": "行政征收", "20": "行政征收"
+};
+const LEVEL_MAP = {
+    "2": "市", "3": "县", "4": "镇（乡、街道)级", "1": "省"
+};
+function mapMultiValues(val, mapping) {
+    if (!val) return "";
+    return String(val)
+        .split(",")
+        .map(v => {
+            v = String(v).trim(); // 不去前导零
+            return mapping[v] || v;
+        })
+        .join(",");
+}
+
 // 渲染知识图谱主函数
 function renderGraph(nodes, links) {
     currentNodes = nodes;
@@ -56,7 +80,22 @@ function renderGraph(nodes, links) {
         .selectAll("text")
         .data(nodes)
         .join("text")
-        .text(d => d.name)
+        .text(d => {
+            if (d.group === "department") {
+                return mapMultiValues(d.name, DEPT_MAP);
+            } else if (d.group === "matter") {
+                return mapMultiValues(d.name, MATTER_TYPE_MAP);
+            } else if (d.group === "content") {
+                if (d.type === "事项类型") {
+                    return mapMultiValues(d.name, MATTER_TYPE_MAP);
+                } else if (d.type === "实施层级") {
+                    return mapMultiValues(d.name, LEVEL_MAP);
+                } else if (d.type === "授权部门") {
+                    return mapMultiValues(d.name, DEPT_MAP);
+                }
+            }
+            return d.name;
+        })
         .attr("font-size", 16)
         .attr("dy", 5)
         .attr("text-anchor", "middle")
@@ -158,19 +197,36 @@ function showNodeInfo(d) {
         panel.innerHTML = "<p>未选择节点</p>";
         return;
     }
-    // 类型中英文映射
     const groupMap = {
         department: "部门",
         matter: "事项",
         content: "内容",
         other: "其他"
     };
-    let html = `<h2>${d.name || d.id}</h2>`;
+
+    // 根据 group 精确选择映射表
+    let displayName = d.name;
+    if (d.group === "department") {
+        displayName = mapMultiValues(d.name, DEPT_MAP);
+    } else if (d.group === "matter") {
+        displayName = mapMultiValues(d.name, MATTER_TYPE_MAP);
+    } else if (d.group === "content") {
+        if (d.type === "事项类型") {
+            displayName = mapMultiValues(d.name, MATTER_TYPE_MAP);
+        } else if (d.type === "实施层级") {
+            displayName = mapMultiValues(d.name, LEVEL_MAP);
+        } else if (d.type === "授权部门") {
+            displayName = mapMultiValues(d.name, DEPT_MAP);
+        }
+    }
+
+    let html = `<h2>${displayName || d.id}</h2>`;
     html += `<div class="info-row"><span class="info-label">类型:</span>${groupMap[d.group] || d.group}</div>`;
     if (d.id) html += `<div class="info-row"><span class="info-label">ID:</span>${d.id}</div>`;
-    // 新增：显示授权部门、事项类型、实施层级（如果有）
-    if (d.dept) html += `<div class="info-row"><span class="info-label">授权部门:</span>${d.dept}</div>`;
-    if (d.kind) html += `<div class="info-row"><span class="info-label">事项类型:</span>${d.kind}</div>`;
-    if (d.level) html += `<div class="info-row"><span class="info-label">实施层级:</span>${d.level}</div>`;
+
+    if (d.dept) html += `<div class="info-row"><span class="info-label">授权部门:</span>${mapMultiValues(d.dept, DEPT_MAP)}</div>`;
+    if (d.kind) html += `<div class="info-row"><span class="info-label">事项类型:</span>${mapMultiValues(d.kind, MATTER_TYPE_MAP)}</div>`;
+    if (d.level) html += `<div class="info-row"><span class="info-label">实施层级:</span>${mapMultiValues(d.level, LEVEL_MAP)}</div>`;
+
     panel.innerHTML = html;
 }

@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 from neo4j import GraphDatabase
+import re
 
 app = Flask(__name__)
 CORS(app)
@@ -32,6 +33,13 @@ def map_multi_values(val, mapping):
         return ""
     return ",".join([mapping.get(v.strip().lstrip("0"), v.strip()) for v in str(val).split(",")])
 
+def try_map(val):
+    for mapping in (LEVEL_MAP, MATTER_TYPE_MAP, DEPT_MAP):
+        mapped = map_multi_values(val, mapping)
+        if mapped != val:
+            return mapped
+    return val
+
 @app.route('/api/graph')
 def get_graph():
     nodes = []
@@ -48,47 +56,25 @@ def get_graph():
             m = record["m"]
             rel_type = record["rel_type"]
 
-            # 起始节点
+            # 只保留原始属性，不做任何映射
             n_id = n.get("code") or n.get("name") or n.get("value")
             n_group = list(n.labels)[0].lower() if n.labels else "other"
             if n_id and n_id not in node_ids:
-                node_data = {
-                    "id": n_id,
-                    "group": n_group,
-                    "name": n.get("name") or n.get("value")
-                }
-                # 关键：无论属性名是什么，都用 str() 包裹
-                raw_dept = n.get("授权部门") or n.get("dept")
-                if raw_dept:
-                    node_data["dept"] = map_multi_values(str(raw_dept), DEPT_MAP)
-                raw_kind = n.get("事项类型") or n.get("kind")
-                if raw_kind:
-                    node_data["kind"] = map_multi_values(str(raw_kind), MATTER_TYPE_MAP)
-                raw_level = n.get("实施层级") or n.get("level")
-                if raw_level:
-                    node_data["level"] = map_multi_values(str(raw_level), LEVEL_MAP)
+                node_data = dict(n)
+                node_data["id"] = n_id
+                node_data["group"] = n_group
+                node_data["name"] = n.get("name") or n.get("value")
                 nodes.append(node_data)
                 node_ids.add(n_id)
 
-            # 目标节点同理
             if m:
                 m_id = m.get("code") or m.get("name") or m.get("value")
                 m_group = list(m.labels)[0].lower() if m.labels else "other"
                 if m_id and m_id not in node_ids:
-                    node_data = {
-                        "id": m_id,
-                        "group": m_group,
-                        "name": m.get("name") or m.get("value")
-                    }
-                    raw_dept = m.get("授权部门") or m.get("dept")
-                    if raw_dept:
-                        node_data["dept"] = map_multi_values(str(raw_dept), DEPT_MAP)
-                    raw_kind = m.get("事项类型") or m.get("kind")
-                    if raw_kind:
-                        node_data["kind"] = map_multi_values(str(raw_kind), MATTER_TYPE_MAP)
-                    raw_level = m.get("实施层级") or m.get("level")
-                    if raw_level:
-                        node_data["level"] = map_multi_values(str(raw_level), LEVEL_MAP)
+                    node_data = dict(m)
+                    node_data["id"] = m_id
+                    node_data["group"] = m_group
+                    node_data["name"] = m.get("name") or m.get("value")
                     nodes.append(node_data)
                     node_ids.add(m_id)
                 if rel_type:
