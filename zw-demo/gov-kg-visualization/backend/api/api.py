@@ -34,6 +34,7 @@ def map_multi_values(val, mapping):
     return ",".join([mapping.get(v.strip().lstrip("0"), v.strip()) for v in str(val).split(",")])
 
 def try_map(val):
+    # 依次尝试三个映射表，返回第一个成功映射的结果
     for mapping in (LEVEL_MAP, MATTER_TYPE_MAP, DEPT_MAP):
         mapped = map_multi_values(val, mapping)
         if mapped != val:
@@ -46,6 +47,7 @@ def get_graph():
     links = []
     node_ids = set()
     with driver.session() as session:
+        # 查询所有节点及其关系
         result = session.run("""
             MATCH (n)
             OPTIONAL MATCH (n)-[r]->(m)
@@ -56,7 +58,7 @@ def get_graph():
             m = record["m"]
             rel_type = record["rel_type"]
 
-            # 只保留原始属性，不做任何映射
+            # 处理起始节点n
             n_id = n.get("code") or n.get("name") or n.get("value")
             n_group = list(n.labels)[0].lower() if n.labels else "other"
             if n_id and n_id not in node_ids:
@@ -67,6 +69,7 @@ def get_graph():
                 nodes.append(node_data)
                 node_ids.add(n_id)
 
+            # 处理目标节点m
             if m:
                 m_id = m.get("code") or m.get("name") or m.get("value")
                 m_group = list(m.labels)[0].lower() if m.labels else "other"
@@ -77,12 +80,14 @@ def get_graph():
                     node_data["name"] = m.get("name") or m.get("value")
                     nodes.append(node_data)
                     node_ids.add(m_id)
+                # 添加关系
                 if rel_type:
                     links.append({
                         "source": n_id,
                         "target": m_id,
                         "type": rel_type
                     })
+    # 返回JSON格式的节点和关系数据
     return jsonify({"nodes": nodes, "links": links})
 
 if __name__ == '__main__':
