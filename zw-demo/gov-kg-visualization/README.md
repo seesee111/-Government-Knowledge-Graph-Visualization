@@ -22,6 +22,7 @@ gov-kg-visualization/
 │       └── neo4j_api.py
 ├── frontend/          # 前端可视化
 │   ├── index.html
+│   ├── login.html
 │   ├── app.js
 │   ├── d3-visualization.js
 │   └── styles.css
@@ -60,7 +61,7 @@ gov-kg-visualization/
    cd frontend
    python -m http.server 8000
    ```
-   在浏览器访问 [http://localhost:8000/zw-demo/gov-kg-visualization/frontend/index.html]
+   在浏览器访问 [http://localhost:8000/zw-demo/gov-kg-visualization/frontend/login.html]，登录后自动跳转到主页面。
 
 ---
 
@@ -68,8 +69,8 @@ gov-kg-visualization/
 
 - **数据采集**：`crawler/spider.py` 自动抓取政务事项数据，保存为 JSON。
 - **知识图谱构建**：`kg/build_kg.py` 读取 JSON，批量写入 Neo4j，形成“部门-事项”结构。
-- **后端API**：`backend/app.py` 提供 RESTful 接口，前端可动态获取图谱数据。
-- **前端可视化**：`frontend/` 目录下用 D3.js 实现图谱展示，支持缩放、拖拽、节点高亮查询等交互。
+- **后端API**：`backend/app.py` 提供 RESTful 接口，前端可动态获取图谱数据，并支持用户注册、登录、密码修改等功能。
+- **前端可视化**：`frontend/` 目录下用 D3.js 实现图谱展示，支持缩放、拖拽、节点高亮查询等交互。右上角为圆形SVG头像，点击弹出用户信息侧边栏，可修改密码和退出登录。
 
 ---
 
@@ -90,7 +91,7 @@ gov-kg-visualization/
 1. 运行爬虫采集数据
 2. 构建知识图谱写入 Neo4j
 3. 启动后端 Flask 服务
-4. 启动前端本地服务器，浏览器访问前端页面
+4. 启动前端本地服务器，浏览器访问登录页，登录后进入主页面
 5. 点击“加载知识图谱”按钮，浏览和查询政务知识图谱
 
 ---
