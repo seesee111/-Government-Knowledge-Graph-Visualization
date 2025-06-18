@@ -1,4 +1,5 @@
 import json
+import time
 from neo4j import GraphDatabase
 
 class KnowledgeGraphBuilder:
@@ -63,7 +64,9 @@ class KnowledgeGraphBuilder:
 
     def build_knowledge_graph(self, data):
         # 根据数据批量构建知识图谱
-        for item in data:
+        total = len(data)
+        start_time = time.time()  # 记录开始时间
+        for idx, item in enumerate(data, 1):
             dept = item.get("授权部门", "")
             code = item.get("职权编码", "")
             name = item.get("事项名称", "")
@@ -82,6 +85,14 @@ class KnowledgeGraphBuilder:
                 self.create_relationships(
                     dept, code, qlkind, lawbasis, level
                 )
+            # 每100条打印一次进度
+            if idx % 100 == 0 or idx == total:
+                print(f"已处理 {idx}/{total} 条数据")
+        end_time = time.time()  # 记录结束时间
+        duration = end_time - start_time
+        print(f"总耗时：{duration:.2f} 秒")
+        if total > 0:
+            print(f"平均每条耗时：{duration/total:.4f} 秒")
 
 if __name__ == "__main__":
     # 配置Neo4j数据库连接信息

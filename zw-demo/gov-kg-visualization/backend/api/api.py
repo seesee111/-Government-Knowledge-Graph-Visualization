@@ -1,10 +1,12 @@
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from neo4j import GraphDatabase
 import re
+import os
+import json
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 
 # Neo4j数据库连接配置（请根据实际情况修改）
 uri = "bolt://localhost:7687"
@@ -26,6 +28,18 @@ MATTER_TYPE_MAP = {
 LEVEL_MAP = {
     "2": "市", "3": "县", "4": "镇（乡、街道)级", "1": "省"
 }
+
+USERS_FILE = "users.json"
+
+def load_users():
+    if not os.path.exists(USERS_FILE):
+        return {}
+    with open(USERS_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def save_users(users):
+    with open(USERS_FILE, "w", encoding="utf-8") as f:
+        json.dump(users, f, ensure_ascii=False, indent=2)
 
 def map_multi_values(val, mapping):
     """支持多值（如'2,3,4'）的映射"""
@@ -89,6 +103,31 @@ def get_graph():
                     })
     # 返回JSON格式的节点和关系数据
     return jsonify({"nodes": nodes, "links": links})
+
+@app.route('/api/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    username = data.get("username")
+    password = data.get("password")
+    if not username or not password:
+        return jsonify({"success": False, "msg": "用户名和密码不能为空"})
+    users = load_users()
+    if username in users:
+        return jsonify({"success": False, "msg": "用户名已存在"})
+    users[username] = password
+    save_users(users)
+    return jsonify({"success": True, "msg": "注册成功"})
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data.get("username")
+    password = data.get("password")
+    users = load_users()
+    if users.get(username) == password:
+        return jsonify({"success": True, "msg": "登录成功"})
+    else:
+        return jsonify({"success": False, "msg": "用户名或密码错误"})
 
 if __name__ == '__main__':
     app.run(port=5000)

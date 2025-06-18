@@ -8,10 +8,71 @@
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="app.js" defer></script>
     <script src="d3-visualization.js" defer></script>
+    <script>
+        // 未登录则跳转到登录页
+        if (!localStorage.getItem("loginUser")) {
+            window.location.href = "login.html";
+        }
+    </script>
+    <style>
+        /* 右侧面板大头像 */
+        .side-avatar.avatar-large {
+            width: 72px;
+            height: 72px;
+            border-width: 3px;
+            margin-right: 18px;
+        }
+    </style>
 </head>
 <body>
     <header>
         <h1>政务知识图谱</h1>
+        <!-- 用户头像及用户名 -->
+        <div id="user-avatar-float">
+            <div class="avatar-svg avatar-large" id="user-avatar">
+                <!-- SVG ... -->
+                <svg t="1750233557716" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                    xmlns="http://www.w3.org/2000/svg" p-id="1493" width="30" height="30" pointer-events="none">
+                    <path d="M512.341333 238.933333m-238.933333 0a238.933333 238.933333 0 1 0 477.866667 0 238.933333 238.933333 0 1 0-477.866667 0Z" fill="#C6C4CD" p-id="1494"></path>
+                    <path d="M512.341333 546.133333A524.288 524.288 0 0 0 4.437333 1024h1015.125334a524.288 524.288 0 0 0-507.221334-477.866667z m0 68.266667a449.877333 449.877333 0 0 1 424.618667 341.333333H87.04a449.877333 449.877333 0 0 1 425.301333-341.333333z" fill="#C6C4CD" p-id="1495"></path>
+                </svg>
+            </div>
+            <div id="avatar-username"></div>
+        </div>
+
+        <!-- 右侧滑出面板 -->
+        <div id="user-side-panel">
+            <div class="side-panel-header">
+                <div class="side-avatar avatar-svg avatar-large">
+                    <!-- 头像SVG复用，宽高48 -->
+                    <svg t="1750233557716" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                        xmlns="http://www.w3.org/2000/svg" p-id="1493" width="48" height="48" pointer-events="none">
+                        <path d="M512.341333 238.933333m-238.933333 0a238.933333 238.933333 0 1 0 477.866667 0 238.933333 238.933333 0 1 0-477.866667 0Z" fill="#C6C4CD" p-id="1494"></path>
+                        <path d="M512.341333 546.133333A524.288 524.288 0 0 0 4.437333 1024h1015.125334a524.288 524.288 0 0 0-507.221334-477.866667z m0 68.266667a449.877333 449.877333 0 0 1 424.618667 341.333333H87.04a449.877333 449.877333 0 0 1 425.301333-341.333333z" fill="#C6C4CD" p-id="1495"></path>
+                    </svg>
+                </div>
+                <div class="side-header-info">
+                    <span id="side-user-name" style="color: #222; font-weight: bold;"></span>
+                    <span class="side-user-role">普通用户</span>
+                </div>
+                <span id="side-close-btn">&times;</span>
+            </div>
+            <div class="side-panel-content">
+                <div class="user-info-row">
+                    <span class="user-info-label">用户名：</span>
+                    <span id="user-name" style="color: #222; font-weight: bold;"></span>
+                </div>
+                <div class="user-info-row">
+                    <span class="user-info-label">新密码：</span>
+                    <input type="password" id="new-password" placeholder="新密码">
+                </div>
+                <div class="user-info-row" style="flex-direction:column;align-items:flex-start;">
+                    <button id="change-password-btn" style="margin: 6px 0 0 0;">修改密码</button>
+                    <div id="change-msg" style="margin-top:6px;"></div>
+                </div>
+                <button id="logout-btn" class="logout-btn">退出登录</button>
+            </div>
+        </div>
     </header>
     <main>
         <div class="controls">

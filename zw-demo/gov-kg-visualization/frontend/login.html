@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>用户登录</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: linear-gradient(120deg, #2980b9, #6dd5fa);
+            min-height: 100vh;
+            margin: 0;
+            font-family: '微软雅黑', Arial, sans-serif;
+        }
+        .login-container {
+            width: 350px;
+            margin: 100px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+            padding: 40px 30px 30px 30px;
+            text-align: center;
+        }
+        .login-container h2 {
+            margin-bottom: 30px;
+            color: #2980b9;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        .login-container input {
+            width: 90%;
+            padding: 12px 10px;
+            margin: 12px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .login-container input:focus {
+            border: 1.5px solid #2980b9;
+        }
+        .login-container button {
+            width: 45%;
+            padding: 10px 0;
+            margin: 15px 2.5%;
+            border: none;
+            border-radius: 6px;
+            background: #2980b9;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .login-container button:hover {
+            background: #6dd5fa;
+            color: #2980b9;
+        }
+        #auth-msg {
+            margin-top: 10px;
+            min-height: 22px;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>政务知识图谱登录</h2>
+        <input type="text" id="auth-username" placeholder="用户名">
+        <input type="password" id="auth-password" placeholder="密码">
+        <div>
+            <button id="login-btn">登录</button>
+            <button id="register-btn">注册</button>
+        </div>
+        <div id="auth-msg"></div>
+    </div>
+    <script>
+    // 登录
+    document.getElementById('login-btn').onclick = async function() {
+        const username = document.getElementById('auth-username').value.trim();
+        const password = document.getElementById('auth-password').value.trim();
+        const msg = document.getElementById('auth-msg');
+        if (!username || !password) {
+            msg.textContent = "请输入用户名和密码";
+            msg.style.color = "red";
+            return;
+        }
+        const res = await fetch('http://localhost:5000/api/login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({username, password})
+        });
+        const data = await res.json();
+        msg.textContent = data.msg;
+        if (data.success) {
+            msg.style.color = "green";
+            localStorage.setItem("loginUser", username);
+            setTimeout(() => {
+                window.location.href = "index.html";
+            }, 600);
+        } else {
+            msg.style.color = "red";
+        }
+    };
+    // 注册
+    document.getElementById('register-btn').onclick = async function() {
+        const username = document.getElementById('auth-username').value.trim();
+        const password = document.getElementById('auth-password').value.trim();
+        const msg = document.getElementById('auth-msg');
+        if (!username || !password) {
+            msg.textContent = "请输入用户名和密码";
+            msg.style.color = "red";
+            return;
+        }
+        const res = await fetch('http://localhost:5000/api/register', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({username, password})
+        });
+        const data = await res.json();
+        msg.textContent = data.msg;
+        if (data.success) {
+            msg.style.color = "green";
+        } else {
+            msg.style.color = "red";
+        }
+    };
+    </script>
+</body>
+</html>
